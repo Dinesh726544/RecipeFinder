@@ -47,4 +47,48 @@ const Createprompt = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, formatedText, "Generated!"));
 });
 
-export { Createprompt };
+const getPromptHistory = asyncHandler(async(req,res) => {
+  const responseHistory = await PromptHistory.find({
+    owner : req.user?._id
+  })
+
+  // console.log(responseHistory);
+  
+
+  const result = responseHistory.map(item => ({
+    prompt: item.prompt,
+    generatedResponse: item.generatedResponse
+  }));
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200,result,"history fached!!"))
+})
+
+const deletePromptHistoryById = asyncHandler(async(req,res) => {
+  const {promptId} = req.params
+  const prompt = await PromptHistory.findByIdAndDelete(promptId)
+
+  if (!prompt) {
+    throw new ApiError(400, "prompt id doesnot exist or wrong!!");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "", "prompt deleted successfully"));
+
+})
+
+const deleteAllPromptHistory = asyncHandler(async(req,res) => {
+
+  console.log(req.user._id);
+  
+  await PromptHistory.deleteMany({owner : (req.user?._id)})
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200,{},"cleared all user history!!"))
+})
+
+
+export { Createprompt,getPromptHistory,deletePromptHistoryById,deleteAllPromptHistory };
