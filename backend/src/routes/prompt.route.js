@@ -14,7 +14,7 @@ router.route("/getResponseHistory").get(verifyJWT,
   getPromptHistory
 )
 
-router.route("deleteById/:promptId").delete(verifyJWT,
+router.route("/deleteById/:promptId").delete(verifyJWT,
   deletePromptHistoryById
 )
 

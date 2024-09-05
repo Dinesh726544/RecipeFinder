@@ -2,7 +2,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { PromptHistory } from "../models/promptHistory.model.js";
+import { Prompt } from "../models/prompt.model.js";
 
 const Createprompt = asyncHandler(async (req, res) => {
   //get prompt from user
@@ -36,7 +36,7 @@ const Createprompt = asyncHandler(async (req, res) => {
 
   
   
-  await PromptHistory.create({
+  await Prompt.create({
     owner : req.user._id,
     prompt,
     generatedResponse : formatedText
@@ -48,7 +48,7 @@ const Createprompt = asyncHandler(async (req, res) => {
 });
 
 const getPromptHistory = asyncHandler(async(req,res) => {
-  const responseHistory = await PromptHistory.find({
+  const responseHistory = await Prompt.find({
     owner : req.user?._id
   })
 
@@ -67,7 +67,7 @@ const getPromptHistory = asyncHandler(async(req,res) => {
 
 const deletePromptHistoryById = asyncHandler(async(req,res) => {
   const {promptId} = req.params
-  const prompt = await PromptHistory.findByIdAndDelete(promptId)
+  const prompt = await Prompt.findByIdAndDelete(promptId)
 
   if (!prompt) {
     throw new ApiError(400, "prompt id doesnot exist or wrong!!");
@@ -83,7 +83,7 @@ const deleteAllPromptHistory = asyncHandler(async(req,res) => {
 
   console.log(req.user._id);
   
-  await PromptHistory.deleteMany({owner : (req.user?._id)})
+  await Prompt.deleteMany({owner : (req.user?._id)})
 
   return res
     .status(200)

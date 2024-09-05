@@ -7,9 +7,11 @@ const promptSchema = new Schema({
     ref : User
   },
   prompt : {
-    type :String,
-    required : true
+    type : String
   },
+  generatedResponse : {
+    type : String
+  }
 },{timestamps : true})
 
-export const Prompt = mongoose.model("Prompt", promptSchema);
+export const Prompt = mongoose.model("Prompt",promptSchema)
