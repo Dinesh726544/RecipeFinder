@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login as authLogin } from "../features/auth/authSlice.js";
-import { Button, Input} from "./index";
-import {useSelector, useDispatch } from "react-redux";
+import { Button, Input } from "./index";
+import { useSelector, useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 
 function LoginForm() {
@@ -11,41 +11,46 @@ function LoginForm() {
   const { register, handleSubmit } = useForm();
   const [error, setError] = useState("");
 
+  // const isAuthenticated = useSelector(
+  //   (state) => state.auth.isAuthenticated
+  // );
+  // console.log(isAuthenticated);
+
   const login = async (data) => {
     // console.log(data);
     setError("");
-    
-      try {
-        const response = await fetch('http://localhost:5555/api/v1/users/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            email: data.email,
-            password: data.password,
-          }),
-        });
-    
-        if (!response.ok) {
-          throw new Error("Login failed");
-        }
-    
-        const result = await response.json();
-        // console.log(result);
-        console.log(response);
-        
-        if (data) dispatch(authLogin(data));
 
-        navigate("/dashboard");
-        // Handle success (e.g., navigate to another page)
-        navigate("/dashboard"); // Example of navigation after login
-      } catch (error) {
-        console.error('Error:', error);
-        setError("Login failed. Please try again.");
+    try {
+      const response = await fetch("http://localhost:5555/api/v1/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Login failed");
       }
 
+      const result = await response.json();
+      console.log("result :: ", result);
+
+      //saving accessToken in localStroage
+      localStorage.setItem("accessToken", result.data.accessToken);
+
+      //update i.e user loged in to store
+      if (data) dispatch(authLogin(data));
+
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error:", error);
+      setError("Login failed. Please try again.");
+    }
   };
 
   return (
@@ -90,7 +95,7 @@ function LoginForm() {
               })}
             />
             <Button type="submit" className="w-full">
-              Login 
+              Login
             </Button>
           </div>
         </form>

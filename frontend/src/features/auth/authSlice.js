@@ -1,8 +1,8 @@
 import {createSlice} from "@reduxjs/toolkit"
 
 const initialState = {
-    // status : false,
-    userData : null
+    userData : null,
+    isAuthenticated: !!localStorage.getItem('accessToken'), // Check if token exists on load
 }
 
 const authSlice = createSlice({
@@ -13,12 +13,13 @@ const authSlice = createSlice({
     
     reducers: {
         login : (state,action) => {
-            // state.status = true;
+            state.isAuthenticated = true;
             state.userData = action.payload;
         },
         logout : (state) => {
-            // state.status = false;
+            state.isAuthenticated = false
             state.userData = null;
+            localStorage.removeItem('accessToken'); // Clear the token on logout
         }
     }
 })

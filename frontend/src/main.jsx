@@ -11,8 +11,12 @@ import Home from "./components/Home/Home.jsx";
 import Login from "./components/Pages/Login.jsx";
 import Register from "./components/Pages/Register.jsx";
 import Dashboard from "./components/Pages/Dashboard.jsx";
-import store  from "../src/app/store.js";
+import store from "../src/app/store.js";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import { Provider } from "react-redux";
+
+
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -20,7 +24,24 @@ const router = createBrowserRouter(
       <Route path="" element={<Home />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/dashboard" element={<Dashboard />} />
+      {/* Protect the dashboard route */}
+        <Route 
+          path="/dashboard" 
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } 
+        />
+      {/* Protect the History route */}
+        <Route 
+          path="/history" 
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } 
+        />
     </Route>
   )
 );
