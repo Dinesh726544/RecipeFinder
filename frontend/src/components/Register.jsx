@@ -1,19 +1,38 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import { login } from "../store/authSlice";
+import { login } from "../features/auth/authSlice.js";
 import { Button, Input} from "./index.js";
-// import { useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 
 function RegisterForm() {
   const navigate = useNavigate();
   const [error, setError] = useState("");
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const { register, handleSubmit } = useForm();
 
   const create = async (data) => {
     console.log(data);
     setError("");
+    const formData = new FormData();
+    formData.append('username', data.username); // other form data
+    formData.append('email', data.email); 
+    formData.append('password', data.password); 
+    formData.append('avatar', data.avatar[0]);     
+
+    try {
+      const response = await fetch('http://localhost:5555/api/v1/users/register', {
+        method: 'POST',
+        body: formData,
+      });
+      const result = await response.json();
+      console.log("result",result);
+      if (result) dispatch(login(data));
+      navigate("/dashboard")
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -38,9 +57,9 @@ function RegisterForm() {
         <form onSubmit={handleSubmit(create)}>
           <div className="space-y-5">
             <Input
-              label="Name: "
-              placeholder="Enter your name"
-              {...register("name", {
+              label="Username: "
+              placeholder="Enter your username"
+              {...register("username", {
                 required: true,
               })}
             />
@@ -62,6 +81,14 @@ function RegisterForm() {
               type="password"
               placeholder="Enter your password"
               {...register("password", {
+                required: true,
+              })}
+            />
+            <Input
+              label="avatar: "
+              type="file"
+              placeholder="upload your avatar"
+              {...register("avatar", {
                 required: true,
               })}
             />

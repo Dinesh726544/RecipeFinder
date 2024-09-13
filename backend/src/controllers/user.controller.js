@@ -23,10 +23,10 @@ const generateAccessAndRefereshTokens = async (userId) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, fullName, email, password } = req.body;
+  const { username, email, password } = req.body;
 
   if (
-    [fullName, email, username, password].some((field) => field?.trim() === "")
+    [email, username, password].some((field) => field?.trim() === "")
   ) {
     throw new ApiError(400, "All fields are required");
   }
@@ -55,7 +55,6 @@ const registerUser = asyncHandler(async (req, res) => {
     );
 
   const user = await User.create({
-    fullName,
     avatar: avatar.url,
     email,
     password,
@@ -76,11 +75,12 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  const { email, username, password } = req.body;
+  //removing username
+  const { email, password } = req.body;
   console.log(email);
 
-  if (!username && !email) {
-    throw new ApiError(400, "username or email is required");
+  if (!email) {
+    throw new ApiError(400, "email is required");
   }
 
   // Here is an alternative of above code based on logic discussed in video:
@@ -90,7 +90,7 @@ const loginUser = asyncHandler(async (req, res) => {
   // }
 
   const user = await User.findOne({
-    $or: [{ username }, { email }],
+    email
   });
 
   if (!user) {

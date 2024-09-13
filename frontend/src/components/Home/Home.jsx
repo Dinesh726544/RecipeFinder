@@ -78,9 +78,11 @@ const itemData = [
 ];
 
 
+
 function Home() {
   return (
     <Container>
+
       <div className="bg-gray-800 h-screen flex items-center justify-center">
         <div className="container mx-auto px-4 md:flex md:items-center md:justify-between">
           <div className="md:w-1/2 text-center md:text-left">

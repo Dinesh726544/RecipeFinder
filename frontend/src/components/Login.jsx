@@ -1,20 +1,50 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import { login as authLogin } from "../store/authSlice";
+import { login as authLogin } from "../features/auth/authSlice.js";
 import { Button, Input} from "./index";
-// import {useSelector, useDispatch } from "react-redux";
-// import authService from "../appwrite/auth";
+import {useSelector, useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 
 function LoginForm() {
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const { register, handleSubmit } = useForm();
   const [error, setError] = useState("");
 
   const login = async (data) => {
-    console.log(data);
+    // console.log(data);
     setError("");
+    
+      try {
+        const response = await fetch('http://localhost:5555/api/v1/users/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            email: data.email,
+            password: data.password,
+          }),
+        });
+    
+        if (!response.ok) {
+          throw new Error("Login failed");
+        }
+    
+        const result = await response.json();
+        // console.log(result);
+        console.log(response);
+        
+        if (data) dispatch(authLogin(data));
+
+        navigate("/dashboard");
+        // Handle success (e.g., navigate to another page)
+        navigate("/dashboard"); // Example of navigation after login
+      } catch (error) {
+        console.error('Error:', error);
+        setError("Login failed. Please try again.");
+      }
 
   };
 

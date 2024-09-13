@@ -6,12 +6,13 @@ import { Prompt } from "../models/prompt.model.js";
 
 const Createprompt = asyncHandler(async (req, res) => {
   //get prompt from user
-  const { prompt } = req.body;
+  // const { Ingredients,"Meal Type","Cuisine Preference","Cooking Time",Complexity } = req.body;
+  const {prompt} = req.body;
 
   const genAI = new GoogleGenerativeAI(process.env.API_KEY);
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-  const result = await model.generateContent(prompt);
+  const result = await model.generateContent(`generate Recipe having these points:-\n ${prompt}`);
   console.log(result.response.text());
 
   if (!result) {
