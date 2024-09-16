@@ -3,18 +3,16 @@ import Container from "../Container/Container";
 import { Button, Input } from "../index";
 import { useForm } from "react-hook-form";
 import DOMPurify from "dompurify"; // Import DOMPurify for sanitization
-import { useSelector } from "react-redux";
+import LoadingAnimation from "../LoadingAnimation";
 
 function Dashboard() {
   const { register, handleSubmit } = useForm();
   const [error, setError] = useState("");
   const [recipe, setRecipe] = useState(""); // State to store the recipe
-
-  const isHistoryVisible = useSelector(
-    (state) => state.visibility.isHistoryVisible
-  );
+  const [loading, setLoading] = useState(false);
 
   const generateRecipe = async (data) => {
+    setLoading(true);
     setError("");
     const concatenatedString = `
       Ingredients: ${data.Ingredients}, 
@@ -40,6 +38,10 @@ function Dashboard() {
       }
 
       const result = await response.json();
+      console.log("recipe :: ", result.data);
+      // console.log("recipe :: ", typeof result.data); //string
+
+      setLoading(false);
       setRecipe(result.data); // Set the response data (formatted HTML) to state
     } catch (error) {
       console.error("Error:", error);
@@ -54,77 +56,65 @@ function Dashboard() {
 
   return (
     <Container>
-      <div>
-        <div className="md:flex items-center justify-center w-full h-screen">
+      <div className="md:h-screen mt-[120px]">
+        <div className="md:flex items-center justify-center w-full">
           {/* Input Recipe */}
-          {!isHistoryVisible && (
-            <div className="mx-auto w-full max-w-sm bg-gray-100 rounded-xl p-10 border border-black/10">
-              <h2 className="text-center text-2xl font-bold leading-tight">
-                Generate Your Recipe
-              </h2>
-              {error && (
-                <p className="text-red-600 mt-8 text-center">{error}</p>
-              )}
-              <form onSubmit={handleSubmit(generateRecipe)} className="mt-8">
-                <div className="space-y-5">
-                  <Input
-                    label="Ingredients"
-                    placeholder="Enter ingredients"
-                    {...register("Ingredients", { required: true })}
-                  />
-                  <Input
-                    label="Meal Type"
-                    placeholder="Enter meal type"
-                    {...register("Meal Type", { required: true })}
-                  />
-                  <Input
-                    label="Cuisine Preference"
-                    placeholder="i.e., Italian,Mexican..."
-                    {...register("Cuisine Preference", { required: true })}
-                  />
-                  <Input
-                    label="Cooking Time"
-                    placeholder="i.e., 30 minutes"
-                    {...register("Cooking Time", { required: true })}
-                  />
-                  <Input
-                    label="Complexity"
-                    placeholder="i.e., beginner, intermediate, advance"
-                    {...register("Complexity", { required: true })}
-                  />
-                  <Button type="submit" className="w-full">
-                    Generate Recipe
-                  </Button>
-                </div>
-              </form>
-            </div>
-          )}
+          <div className="mx-auto w-full max-w-sm bg-gray-100 rounded-xl p-10 border border-black/10">
+            <h2 className="text-center text-2xl font-bold leading-tight">
+              Generate Your Recipe
+            </h2>
+            {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
+            <form onSubmit={handleSubmit(generateRecipe)} className="mt-8">
+              <div className="space-y-5">
+                <Input
+                  label="Ingredients"
+                  placeholder="Enter ingredients"
+                  {...register("Ingredients", { required: true })}
+                />
+                <Input
+                  label="Meal Type"
+                  placeholder="Enter meal type"
+                  {...register("Meal Type", { required: true })}
+                />
+                <Input
+                  label="Cuisine Preference"
+                  placeholder="i.e., Italian,Mexican..."
+                  {...register("Cuisine Preference", { required: true })}
+                />
+                <Input
+                  label="Cooking Time"
+                  placeholder="i.e., 30 minutes"
+                  {...register("Cooking Time", { required: true })}
+                />
+                <Input
+                  label="Complexity"
+                  placeholder="i.e., beginner, intermediate, advance"
+                  {...register("Complexity", { required: true })}
+                />
+                <Button type="submit" className="w-full">
+                  Generate Recipe
+                </Button>
+              </div>
+            </form>
+          </div>
 
           {/* Output Recipe */}
-          {!isHistoryVisible && (
-            <div className="mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10 md:max-h-[600px] h-[400px] overflow-y-auto mt-[20px] mb-[20px] md:mt-0 md:mb-0">
-              <h2 className="text-center text-2xl font-bold leading-tight mb-[8px]">
-                Here is the Recipe!!
-              </h2>
-              {recipe ? (
-                <div
-                  className="text-center"
-                  dangerouslySetInnerHTML={createMarkup(recipe)} // Safely render HTML
-                />
-              ) : (
-                <p className="text-center">No recipe generated yet.</p>
-              )}
-            </div>
-          )}
-
-          {/* History Recipe */}
-          {isHistoryVisible && (
-            <div className="mx-auto w-full max-w-sm bg-gray-100 rounded-xl p-10 border border-black/10 md:max-h-[600px] h-[400px] overflow-y-auto mt-[20px] mb-[20px] md:mt-0 md:mb-0">
-              <h2 className="text-center text-2xl font-bold leading-tight mb-[8px]">
-                Your History
-              </h2>
-            </div>
-          )}
+          <div className="mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10 md:max-h-[600px] h-[400px] overflow-y-auto mt-[20px] mb-[20px] md:mt-0 md:mb-0 ">
+            <h2 className="text-center text-2xl font-bold leading-tight mb-[8px]">
+              Here is the Recipe!!
+            </h2>
+            {loading ? (
+              <p>
+                <LoadingAnimation />
+              </p> // Display loading message
+            ) : recipe ? (
+              <div
+                dangerouslySetInnerHTML={createMarkup(recipe)} // Safely render HTML
+              />
+            ) : (
+              <p className="text-center">No recipe generated yet.</p>
+            )}
+          </div>
         </div>
       </div>
     </Container>
