@@ -38,8 +38,6 @@ function Dashboard() {
       }
 
       const result = await response.json();
-      console.log("recipe :: ", result.data);
-      // console.log("recipe :: ", typeof result.data); //string
 
       setLoading(false);
       setRecipe(result.data); // Set the response data (formatted HTML) to state

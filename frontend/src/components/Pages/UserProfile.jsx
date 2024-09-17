@@ -152,7 +152,7 @@ function UserProfile() {
               {...register("Updateavatar")}
             />
             <Button type="submit" className="w-full">
-              Create Account
+              update avatar
             </Button>
           </div>
         </form>
