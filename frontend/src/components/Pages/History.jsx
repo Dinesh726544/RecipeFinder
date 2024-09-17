@@ -6,7 +6,6 @@ import Stack from "@mui/material/Stack";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { CiCircleChevDown, CiCircleChevUp } from "react-icons/ci";
 import { RiDeleteBin5Fill } from "react-icons/ri";
-import { useSnackbar } from "notistack";
 import { Link } from "react-router-dom";
 import { MdOutlineDeleteForever } from "react-icons/md";
 
@@ -20,7 +19,6 @@ function History() {
 
   // Hook to detect mobile view
   const isMobile = useMediaQuery("(max-width: 600px)");
-  const { enqueueSnackbar } = useSnackbar();
 
   // Fetch history data from the backend
   useEffect(() => {
