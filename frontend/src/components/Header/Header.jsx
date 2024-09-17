@@ -3,17 +3,16 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { IconButton } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 import { Drawer } from "@mui/material";
-import Divider from "@mui/material/Divider";
+import { useState } from "react";
+import { Divider } from "@mui/material";
 
 export default function Header() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDrawer = (open) => (event) => {
@@ -28,18 +27,15 @@ export default function Header() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar
-        position="fixed"
-        sx={{ backgroundColor: "black" }}
-      >
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+      <AppBar position="fixed" sx={{ backgroundColor: "black" }}>
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
             <Link to="/">
-              <button color="inherit">theCodeCrusaderX</button>
+              <button color="inherit" style={{ color: "white", fontSize: "1.2rem" }}>theCodeCrusaderX</button>
             </Link>
           </div>
 
-          <div>
+          <div style={{ display: "flex", alignItems: "center" }}>
             {!isAuthenticated ? (
               <>
                 <Link to="/register">
@@ -74,126 +70,89 @@ export default function Header() {
               </>
             ) : (
               <>
-                {/* Desktop buttons */}
-                <Box
-                  sx={{
-                    display: { xs: "none", md: "block" }, // Hide on small screens
-                  }}
-                >
-                  <Link to="/dashboard">
-                    <Button
-                      sx={{
-                        color: "white",
-                        backgroundColor: "transparent",
-                        "&:hover": {
-                          color: "black",
-                          backgroundColor: "white",
-                        },
-                      }}
-                    >
-                      Dashboard
-                    </Button>
-                  </Link>
-
-                  <Link to="/history">
-                    <Button
-                      sx={{
-                        color: "white",
-                        backgroundColor: "transparent",
-                        "&:hover": {
-                          color: "black",
-                          backgroundColor: "white",
-                        },
-                      }}
-                    >
-                      History
-                    </Button>
-                  </Link>
-
-                  <Link to="/logout">
-                    <Button
-                      sx={{
-                        color: "white",
-                        backgroundColor: "transparent",
-                        "&:hover": {
-                          color: "black",
-                          backgroundColor: "white",
-                        },
-                      }}
-                    >
-                      Logout
-                    </Button>
-                  </Link>
-                </Box>
-
-                <div className="md:hidden">
-                  {/* Button to open the menu */}
-                  <IconButton
-                    edge="start"
-                    color="inherit"
-                    aria-label="menu"
-                    onClick={toggleDrawer(true)}
-                  >
-                    <MenuIcon />
-                  </IconButton>
-
-                  {/* Drawer with slide-in animation */}
-                  <Drawer
-                    anchor="right" // Slide-in from the right side
-                    open={isOpen}
-                    onClose={toggleDrawer(false)}
-                    sx={{ width: 250 }} 
-                    ModalProps={{
-                      keepMounted: true, // Better open performance on mobile.
+                <Link to="/user-profile">
+                  <Button
+                    sx={{
+                      color: "white",
+                      backgroundColor: "transparent",
+                      marginRight: "1rem",  // Add space between profile button and menu
+                      "&:hover": {
+                        color: "black",
+                        backgroundColor: "white",
+                      },
                     }}
                   >
-                    {/* The content of the Drawer */}
-                    <div
-                      className="flex flex-col h-full w-full p-4 bg-green-800"
-                      onClick={toggleDrawer(false)}
-                      onKeyDown={toggleDrawer(false)}
-                    >
-                      <h2 className="text-2xl font-bold mb-4 text-white">
-                        Menu
-                      </h2>
-                      <Divider
-                        sx={{
-                          borderBottomWidth: 3,
-                          borderColor: "black",
-                          fontWeight: "bold",
-                        }}
-                      />
-                      <nav className="space-y-4 flex flex-col">
-                        <Link
-                          to="/dashboard"
-                          className="block text-xl hover:bg-black text-white font-bold py-2 px-4 rounded-full border border-white text-center mt-4"
-                        >
-                          <button>Dashboard</button>
-                        </Link>
+                    Profile
+                  </Button>
+                </Link>
 
-                        <Link
-                          to="/history"
-                          className="block text-xl hover:bg-black text-white font-bold py-2 px-4 rounded-full border border-white text-center"
-                        >
-                          <button>History</button>
-                        </Link>
-
-                        <Link to="/logout">
-                          <button
-                            className="block text-xl hover:bg-black text-white font-bold py-2 px-4 rounded-full hover:text-red-500 border border-white text-center"
-                          >
-                            Logout
-                          </button>
-                        </Link>
-                      </nav>
-                    </div>
-                  </Drawer>
-                </div>
+                {/* Drawer for mobile */}
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  aria-label="menu"
+                  onClick={toggleDrawer(true)}
+                  sx={{
+                    "&:hover": {
+                      color: "black",
+                      backgroundColor: "white",
+                    },
+                  }}
+                >
+                  <MenuIcon />
+                </IconButton>
               </>
             )}
           </div>
         </Toolbar>
       </AppBar>
+
+      <Drawer
+        anchor="right"
+        open={isOpen}
+        onClose={toggleDrawer(false)}
+        sx={{ width: 250 }}
+        ModalProps={{
+          keepMounted: true,
+        }}
+      >
+        <div
+          className="flex flex-col h-full w-full p-4 bg-gray-800"
+          onClick={toggleDrawer(false)}
+          onKeyDown={toggleDrawer(false)}
+        >
+          <h2 className="text-2xl font-bold mb-4 text-white">Menu</h2>
+          <Divider
+            sx={{
+              borderBottomWidth: 3,
+              borderColor: "white",
+              fontWeight: "bold",
+            }}
+          />
+          <nav className="space-y-4 flex flex-col mt-6">
+            <Link
+              to="/dashboard"
+              className="block text-xl text-white hover:bg-gray-700 rounded-full py-2 px-4 text-center"
+            >
+              Dashboard
+            </Link>
+
+            <Link
+              to="/history"
+              className="block text-xl text-white hover:bg-gray-700 rounded-full py-2 px-4 text-center"
+            >
+              History
+            </Link>
+
+            <Link
+              to="/logout"
+              className="block text-xl text-white hover:bg-gray-700 rounded-full py-2 px-4 text-center"
+            >
+              Logout
+            </Link>
+          </nav>
+        </div>
+      </Drawer>
     </Box>
   );
 }

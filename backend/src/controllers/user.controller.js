@@ -1,6 +1,9 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  uploadOnCloudinary,
+  deleteImageFromCloudinary,
+} from "../utils/cloudinary.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
@@ -25,9 +28,7 @@ const generateAccessAndRefereshTokens = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
-  if (
-    [email, username, password].some((field) => field?.trim() === "")
-  ) {
+  if ([email, username, password].some((field) => field?.trim() === "")) {
     throw new ApiError(400, "All fields are required");
   }
 
@@ -47,10 +48,9 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   // console.log(avatarLocalPath);
-  
+
   const avatar = await uploadOnCloudinary(avatarLocalPath);
   // console.log(avatar);
-  
 
   if (!avatar)
     throw new ApiError(
@@ -94,7 +94,7 @@ const loginUser = asyncHandler(async (req, res) => {
   // }
 
   const user = await User.findOne({
-    email
+    email,
   });
 
   if (!user) {
@@ -165,4 +165,72 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "User logged Out"));
 });
 
-export { registerUser, loginUser, logoutUser };
+const getCurrentUser = asyncHandler(async (req, res) => {
+  return res
+    .status(200)
+    .json(new ApiResponse(200, req.user, "User fetched successfully"));
+});
+
+const updateUserAvatar = asyncHandler(async (req, res) => {
+  console.log("req.file :: ", req.file);
+
+  const avatarLocalPath = req.file?.path;
+
+  if (!avatarLocalPath) {
+    throw new ApiError(400, "Avatar file is missing");
+  }
+
+  console.log(avatarLocalPath);
+
+  //TODO: delete old image - assignment
+
+  //req.user was passed though verifyJwt and we got the user then we found the avarat
+  if (req.user.avatar.length > 0) {
+    const avatarUrl = req.user.avatar;
+
+    const getPublicIdFromUrl = (url) => {
+      // Extract the part after /upload/ and remove the file extension
+      const parts = url.split("/");
+      const publicIdWithExtension = parts[parts.length - 1];
+      const publicId = publicIdWithExtension.split(".")[0]; // Removing the file extension
+      return publicId;
+    };
+
+    //URL
+    const imageUrl = avatarUrl;
+
+    // Get public_id from URL
+    const publicId = getPublicIdFromUrl(imageUrl);
+    console.log("publicId :: ", publicId);
+
+    deleteImageFromCloudinary(publicId);
+  }
+
+  const avatar = await uploadOnCloudinary(avatarLocalPath);
+
+  if (!avatar.url) {
+    throw new ApiError(400, "Error while uploading on avatar");
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $set: {
+        avatar: avatar.url,
+      },
+    },
+    { new: true }
+  ).select("-password");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Avatar image updated successfully"));
+});
+
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  getCurrentUser,
+  updateUserAvatar,
+};

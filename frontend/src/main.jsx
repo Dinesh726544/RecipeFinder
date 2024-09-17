@@ -20,6 +20,7 @@ import { SnackbarProvider } from "notistack";
 import Logout from "./components/Pages/Logout.jsx";
 import DeleteHistoryById from "./components/Pages/DeleteHistoryById.jsx";
 import DeleteAllHistory from "./components/Pages/DeleteAllHistory.jsx";
+import UserProfile from "./components/Pages/UserProfile.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -27,6 +28,15 @@ const router = createBrowserRouter(
       <Route path="" element={<Home />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
+      {/* Protect the UserProfile route */}
+      <Route
+        path="/user-profile"
+        element={
+          <ProtectedRoute>
+            <UserProfile />
+          </ProtectedRoute>
+        }
+      />
       {/* Protect the dashboard route */}
       <Route
         path="/dashboard"
@@ -72,6 +82,7 @@ const router = createBrowserRouter(
           </ProtectedRoute>
         }
       />
+
     </Route>
   )
 );
