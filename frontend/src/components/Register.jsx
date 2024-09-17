@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import { login } from "../features/auth/authSlice.js";
 import { Button, Input } from "./index.js";
-// import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import { useSnackbar } from "notistack";
 
@@ -10,7 +8,6 @@ import { useSnackbar } from "notistack";
 function RegisterForm() {
   const navigate = useNavigate();
   const [error, setError] = useState("");
-  // const dispatch = useDispatch();
   const { register, handleSubmit } = useForm();
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -30,14 +27,13 @@ function RegisterForm() {
     formData.append("avatar", data.avatar && data.avatar[0]);
 
     try {
-      const response = await fetch("http://localhost:5555/api/v1/users/register", {
+      const response = await fetch("https://recipefinder-uch2.onrender.com/api/v1/users/register", {
         method: "POST",
         body: formData,
       });
       const result = await response.json();
 
       if (response.ok) {
-        // dispatch(login(data));
         console.log("success registration");
         enqueueSnackbar("Registration successfully", { variant: "success" });
         

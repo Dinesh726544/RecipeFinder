@@ -17,7 +17,7 @@ function DeleteHistoryById() {
 
     axios
       .delete(
-        `http://localhost:5555/api/v1/prompt/deleteById/${promptId}`,
+        `https://recipefinder-uch2.onrender.com/api/v1/prompt/deleteById/${promptId}`,
         {
           headers: {
             "Content-Type": "application/json",

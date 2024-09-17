@@ -30,7 +30,7 @@ function History() {
         }
 
         const response = await fetch(
-          `http://localhost:5555/api/v1/prompt/getResponseHistory?page=${currentPage}&query=${query}&limit=5`,
+          `https://recipefinder-uch2.onrender.com/api/v1/prompt/getResponseHistory?page=${currentPage}&query=${query}&limit=5`,
           {
             method: "GET",
             credentials: "include",
