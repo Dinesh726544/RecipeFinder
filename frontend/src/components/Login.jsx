@@ -20,6 +20,7 @@ function LoginForm() {
     try {
       const response = await fetch("https://recipefinder-backend-7e25.onrender.com/api/v1/users/login", {
         method: "POST",
+        mode: 'no-cors',
         headers: {
           "Content-Type": "application/json",
         },

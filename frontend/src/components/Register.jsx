@@ -29,6 +29,7 @@ function RegisterForm() {
     try {
       const response = await fetch("https://recipefinder-backend-7e25.onrender.com/api/v1/users/register", {
         method: "POST",
+        mode: 'no-cors',
         body: formData,
       });
       const result = await response.json();
