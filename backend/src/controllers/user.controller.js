@@ -7,6 +7,7 @@ import {
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
+
 const generateAccessAndRefereshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -26,6 +27,7 @@ const generateAccessAndRefereshTokens = async (userId) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
+  
   const { username, email, password } = req.body;
 
   if ([email, username, password].some((field) => field?.trim() === "")) {
@@ -40,17 +42,15 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "User with email or username already exists");
   }
 
-  console.log(req.file);
 
-  let avatarLocalPath;
+  let avatar;
   if (req.file) {
-    avatarLocalPath = req.file.path;
+    avatar = await uploadOnCloudinary(req.file.buffer);
   }
 
-  console.log(avatarLocalPath);
-
-  const avatar = await uploadOnCloudinary(avatarLocalPath);
   console.log(avatar);
+  
+
 
   if (!avatar)
     throw new ApiError(
