@@ -18,7 +18,7 @@ function Logout() {
 
     axios
       .post(
-        `https://recipefinder-uch2.onrender.com/api/v1/users/logout`,
+        `http://localhost:5555/api/v1/users/logout`,
         {}, // An empty object here to indicate no data in the POST request body
         {
           headers: {

@@ -24,7 +24,7 @@ function Dashboard() {
 
     try {
       const token = localStorage.getItem("accessToken");
-      const response = await fetch("https://recipefinder-uch2.onrender.com/api/v1/prompt/", {
+      const response = await fetch("http://localhost:5555/api/v1/prompt/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

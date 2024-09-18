@@ -34,7 +34,7 @@ function UserProfile() {
       setLoading(true);
 
       try {
-        const res = await axios.get(`https://recipefinder-uch2.onrender.com/api/v1/users/user`, {
+        const res = await axios.get(`http://localhost:5555/api/v1/users/user`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -73,7 +73,7 @@ function UserProfile() {
       const token = localStorage.getItem("accessToken");
       setLoading(true);
       const response = await fetch(
-        "https://recipefinder-uch2.onrender.com/api/v1/users/update-profile-avatar",
+        "http://localhost:5555/api/v1/users/update-profile-avatar",
         {
           method: "PATCH",
           body: formData,
