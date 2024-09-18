@@ -87,11 +87,6 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "email is required");
   }
 
-  // Here is an alternative of above code based on logic discussed in video:
-  // if (!(username || email)) {
-  //     throw new ApiError(400, "username or email is required")
-
-  // }
 
   const user = await User.findOne({
     email,
@@ -172,48 +167,41 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 });
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
-  console.log("req.file :: ", req.file);
-
-  const avatarLocalPath = req.file?.path;
-
-  if (!avatarLocalPath) {
+  // Check if there's a file in the request
+  if (!req.file || !req.file.buffer) {
     throw new ApiError(400, "Avatar file is missing");
   }
 
-  console.log(avatarLocalPath);
-
-  //TODO: delete old image - assignment
-
-  //req.user was passed though verifyJwt and we got the user then we found the avarat
-  if (req.user.avatar.length > 0) {
-    const avatarUrl = req.user.avatar;
-
+  // If user has an existing avatar, delete it from Cloudinary
+  if (req.user.avatar) {
     const getPublicIdFromUrl = (url) => {
-      // Extract the part after /upload/ and remove the file extension
       const parts = url.split("/");
       const publicIdWithExtension = parts[parts.length - 1];
       const publicId = publicIdWithExtension.split(".")[0]; // Removing the file extension
       return publicId;
     };
 
-    //URL
-    const imageUrl = avatarUrl;
+    // Get the existing avatar URL from the user
+    const avatarUrl = req.user.avatar;
 
-    // Get public_id from URL
-    const publicId = getPublicIdFromUrl(imageUrl);
+    // Get public_id from the avatar URL
+    const publicId = getPublicIdFromUrl(avatarUrl);
     console.log("publicId :: ", publicId);
 
-    deleteImageFromCloudinary(publicId);
+    // Delete the old avatar from Cloudinary
+    await deleteImageFromCloudinary(publicId);
   }
 
-  const avatar = await uploadOnCloudinary(avatarLocalPath);
+  // Upload the new avatar directly from buffer to Cloudinary
+  const avatar = await uploadOnCloudinary(req.file.buffer);
 
   if (!avatar.url) {
-    throw new ApiError(400, "Error while uploading on avatar");
+    throw new ApiError(400, "Error while uploading avatar");
   }
 
+  // Update the user's avatar in the database
   const user = await User.findByIdAndUpdate(
-    req.user?._id,
+    req.user._id,
     {
       $set: {
         avatar: avatar.url,
