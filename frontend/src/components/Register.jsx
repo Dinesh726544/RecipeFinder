@@ -27,7 +27,7 @@ function RegisterForm() {
     formData.append("avatar", data.avatar && data.avatar[0]);
 
     try {
-      const response = await fetch("http://localhost:5555/api/v1/users/register", {
+      const response = await fetch("https://recipefinder-backend-7e25.onrender.com/api/v1/users/register", {
         method: "POST",
         body: formData,
       });
