@@ -45,18 +45,17 @@ const registerUser = asyncHandler(async (req, res) => {
 
   let avatar;
   if (req.file) {
-    avatar = await uploadOnCloudinary(req.file.buffer);
+    try {
+      avatar = await uploadOnCloudinary(req.file.buffer);
+    } catch (error) {
+      throw new ApiError(500, "Error while uploading avatar to Cloudinary.");
+    }
   }
-
-  console.log(avatar);
   
-
-
-  if (!avatar)
-    throw new ApiError(
-      400,
-      "Something went wrong while uploading avatar on cloudinary!!"
-    );
+  if (!avatar || !avatar.url) {
+    throw new ApiError(400, "Avatar upload failed. Please try again.");
+  }
+  
 
   const user = await User.create({
     avatar: avatar.url,
