@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser"
 const app = express()
 
 const corsOptions = {
-  origin: ["http://localhost:5173", "https://recipefinder-frontend.onrender.com/"],
+  origin: ["http://localhost:5173", "https://recipefinder-frontend.onrender.com"],
   methods: ["POST", "GET", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"], // Add necessary headers
