@@ -7,7 +7,6 @@ import {
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
-
 const generateAccessAndRefereshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -27,7 +26,6 @@ const generateAccessAndRefereshTokens = async (userId) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-  
   const { username, email, password } = req.body;
 
   if ([email, username, password].some((field) => field?.trim() === "")) {
@@ -42,7 +40,6 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "User with email or username already exists");
   }
 
-
   let avatar;
   if (req.file) {
     try {
@@ -51,11 +48,10 @@ const registerUser = asyncHandler(async (req, res) => {
       throw new ApiError(500, "Error while uploading avatar to Cloudinary.");
     }
   }
-  
+
   if (!avatar || !avatar.url) {
     throw new ApiError(400, "Avatar upload failed. Please try again.");
   }
-  
 
   const user = await User.create({
     avatar: avatar.url,
@@ -85,7 +81,6 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!email) {
     throw new ApiError(400, "email is required");
   }
-
 
   const user = await User.findOne({
     email,
@@ -191,19 +186,18 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     await deleteImageFromCloudinary(publicId);
   }
 
-  // Upload the new avatar directly from buffer to Cloudinary
   const avatar = await uploadOnCloudinary(req.file.buffer);
 
-  if (!avatar.url) {
+  if (!avatar.secure_url) {
     throw new ApiError(400, "Error while uploading avatar");
   }
 
-  // Update the user's avatar in the database
+  // Update the user's avatar with the secure URL
   const user = await User.findByIdAndUpdate(
     req.user._id,
     {
       $set: {
-        avatar: avatar.url,
+        avatar: avatar.secure_url, // Use secure_url
       },
     },
     { new: true }

@@ -32,7 +32,7 @@ function UserProfile() {
     const token = localStorage.getItem("accessToken");
     const fetchUserProfile = async () => {
       setLoading(true);
-
+  
       try {
         const res = await axios.get(
           `https://recipefinder-backend-7e25.onrender.com/api/v1/users/user`,
@@ -43,9 +43,14 @@ function UserProfile() {
             },
           }
         );
+  
+        const fetchedAvatar = res.data.data.avatar;
+        const avatarUrl = fetchedAvatar.startsWith("http://")
+          ? fetchedAvatar.replace("http://", "https://")
+          : fetchedAvatar;
         setUsername(res.data.data.username);
         setEmail(res.data.data.email);
-        setAvatar(res.data.data.avatar);
+        setAvatar(avatarUrl); // Set the avatar with the updated URL
       } catch (error) {
         console.error("Error fetching profile:", error);
         setError("Failed to fetch user profile.");
@@ -53,9 +58,10 @@ function UserProfile() {
         setLoading(false);
       }
     };
-
+  
     fetchUserProfile();
   }, []);
+  
 
   const create = async (data) => {
     setError("");
