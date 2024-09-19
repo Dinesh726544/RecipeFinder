@@ -7,7 +7,7 @@ const app = express()
 
 const corsOptions = {
   origin: ["http://localhost:5173", "https://recipefinder-frontend.onrender.com"],
-  methods: ["POST", "GET", "PUT", "DELETE", "OPTIONS"],
+  methods: ["POST", "GET", "PUT","PATCH", "DELETE", "OPTIONS"],
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"], // Add necessary headers
   exposedHeaders: ["Authorization"], // Expose headers if needed
