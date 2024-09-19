@@ -29,23 +29,26 @@ function UserProfile() {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("accessToken");
     const fetchUserProfile = async () => {
-      const token = localStorage.getItem("accessToken");
       setLoading(true);
 
       try {
-        const res = await axios.get(`https://recipefinder-backend-7e25.onrender.com/api/v1/users/user`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        console.log(res.data);
+        const res = await axios.get(
+          `https://recipefinder-backend-7e25.onrender.com/api/v1/users/user`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         setUsername(res.data.data.username);
         setEmail(res.data.data.email);
         setAvatar(res.data.data.avatar);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching profile:", error);
+        setError("Failed to fetch user profile.");
       } finally {
         setLoading(false);
       }
@@ -55,7 +58,6 @@ function UserProfile() {
   }, []);
 
   const create = async (data) => {
-    console.log(data);
     setError("");
     setLoading(true);
 
@@ -71,7 +73,7 @@ function UserProfile() {
 
     try {
       const token = localStorage.getItem("accessToken");
-      setLoading(true);
+
       const response = await fetch(
         "https://recipefinder-backend-7e25.onrender.com/api/v1/users/update-profile-avatar",
         {
@@ -86,13 +88,9 @@ function UserProfile() {
       const result = await response.json();
 
       if (response.ok) {
-        setLoading(false);
         setAvatar(result.data.avatar);
-        console.log("Avatar updated successfully");
         enqueueSnackbar("Avatar updated successfully", { variant: "success" });
       } else {
-        setLoading(false);
-
         setError(result.message || "Avatar update failed");
         enqueueSnackbar(result.message || "Avatar update failed", {
           variant: "error",
@@ -110,7 +108,7 @@ function UserProfile() {
   if (loading) {
     return (
       <h1 className="h-screen flex justify-center items-center">
-        <Spinner></Spinner>
+        <Spinner />
       </h1>
     );
   }
@@ -152,7 +150,7 @@ function UserProfile() {
               {...register("Updateavatar")}
             />
             <Button type="submit" className="w-full">
-              update avatar
+              Update Avatar
             </Button>
           </div>
         </form>
@@ -182,7 +180,6 @@ function UserProfile() {
               sx={{
                 color: "white",
                 margin: "10px",
-
                 backgroundColor: "#2e2e2e",
                 "&:hover": {
                   color: "black",

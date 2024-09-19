@@ -26,7 +26,6 @@ function Dashboard() {
       const token = localStorage.getItem("accessToken");
       const response = await fetch("https://recipefinder-backend-7e25.onrender.com/api/v1/prompt/", {
         method: "POST",
-        mode: 'no-cors',
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

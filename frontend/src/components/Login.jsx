@@ -13,43 +13,44 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
 
   const login = async (data) => {
-    // console.log(data);
     setError("");
     setLoading(true);
 
     try {
-      const response = await fetch("https://recipefinder-backend-7e25.onrender.com/api/v1/users/login", {
-        method: "POST",
-        mode: 'no-cors',
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-        }),
-      });
+      const response = await fetch(
+        "https://recipefinder-backend-7e25.onrender.com/api/v1/users/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // Important for CORS with cookies
+          body: JSON.stringify({
+            email: data.email,
+            password: data.password,
+          }),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Login failed");
-      } else {
-        setLoading(false);
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Login failed");
       }
 
       const result = await response.json();
-      console.log("result :: ", result);
 
-      //saving accessToken in localStroage
+      // Saving accessToken in localStorage
       localStorage.setItem("accessToken", result.data.accessToken);
 
-      //update i.e user loged in to store
-      if (data) dispatch(authLogin(data));
+      // Updating the store with logged-in user data
+      if (result.data) dispatch(authLogin(result.data));
 
       navigate("/dashboard");
     } catch (error) {
       console.error("Error:", error);
-      setError("Login failed. Please try again.");
+      setError(error.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -57,14 +58,12 @@ function LoginForm() {
     <>
       {!loading ? (
         <div className="flex items-center justify-center w-full">
-          <div
-            className={`mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10`}
-          >
+          <div className="mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10">
             <h2 className="text-center text-2xl font-bold leading-tight">
               Sign in to your account
             </h2>
             <p className="mt-2 text-center text-base text-black/60">
-              Don&apos;t have any account?&nbsp;
+              Don&apos;t have an account?&nbsp;
               <Link
                 to="/register"
                 className="font-medium text-primary transition-all duration-200 hover:underline"
@@ -82,7 +81,7 @@ function LoginForm() {
                   {...register("email", {
                     required: true,
                     validate: {
-                      matchPatern: (value) =>
+                      matchPattern: (value) =>
                         /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
                           value
                         ) || "Email address must be a valid address",
@@ -105,7 +104,7 @@ function LoginForm() {
           </div>
         </div>
       ) : (
-        <h1 className="text-white">loading...</h1>
+        <h1 className="text-white">Loading...</h1>
       )}
     </>
   );
